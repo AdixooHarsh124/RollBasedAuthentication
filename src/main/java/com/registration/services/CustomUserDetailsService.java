@@ -4,6 +4,7 @@ import com.registration.Entities.Registration;
 import com.registration.Repository.RegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,16 +14,21 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService{
 
-
     @Autowired
     private RegistrationRepository registrationRepository;
+
+//    @Autowired
+//    private userDetails userDetails;
+
     private Registration reg=null;
+    private User user;
     int mob=1;
     int email=1;
 
@@ -30,13 +36,16 @@ public class CustomUserDetailsService implements UserDetailsService{
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException
     {
         Registration registration =  getUser(username);
+        if(registration==null)
+        {
+            throw new UsernameNotFoundException("user not found");
+        }else{
             return new User(username,registration.getPassword(),new ArrayList<>());
+        }
     }
 
     /**
-     *
      *Get ALL Users
-     *
      */
 
     public List<Registration> getAllUser()
@@ -47,9 +56,7 @@ public class CustomUserDetailsService implements UserDetailsService{
     }
 
     /**
-     *
      *  Add New User in Mysqldb
-     *
      */
 
     public Registration addUser(Registration registration) throws Exception
@@ -89,15 +96,12 @@ public class CustomUserDetailsService implements UserDetailsService{
                 throw new Exception("email is already register");
             }
             System.out.println("please fill details in right way");
-//            e.printStackTrace();
         }
         return reg;
     }
 
     /**
-     *
      * Get a User by Email
-     *
      **/
 
     public Registration getUser(String email)
@@ -125,10 +129,7 @@ public class CustomUserDetailsService implements UserDetailsService{
 
     public Registration update(String email,Registration registration)
     {
-        System.out.println("email "+email);
         Registration reg=getUser(email);
-        System.out.println("registration email "+registration.getEmail());
-        System.out.println("user "+getUser(email).equals(registration.getEmail()));
        if(getUser(email).getEmail().equals(registration.getEmail())==false)
        {
            System.out.println(" condition ");
@@ -156,4 +157,5 @@ public class CustomUserDetailsService implements UserDetailsService{
             throw new UsernameNotFoundException("user doesn't found");
         }
     }
+
 }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.security.RolesAllowed;
 import java.util.regex.*;
 
 import java.util.List;
@@ -106,19 +108,14 @@ public class MainController {
         String emailRegex = "^(.+)@(.+)$";
         Pattern pattern = Pattern.compile(emailRegex);
         Matcher matcher = pattern.matcher(registration.getEmail());
-        System.out.println("email "+matcher.matches());
-
 
         String passwordValidation="^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$";
         Pattern patternn = Pattern.compile(passwordValidation);
         Matcher matcherr = patternn.matcher(registration.getPassword());
-        System.out.println("password "+matcherr.matches());
-
 
         String mobileValidation="[6789][0-9]{9}";
         Pattern patternnn = Pattern.compile(mobileValidation);
         Matcher matcherrr = patternnn.matcher(registration.getMobile());
-        System.out.println("mobile "+matcherrr.matches());
         if(matcher.matches() && matcherr.matches() && matcherrr.matches()){
         registration.setPassword(this.bCryptPasswordEncoder.encode(registration.getPassword()));
         reg=customUserDetailsService.update(email, registration);
@@ -136,6 +133,18 @@ public class MainController {
         return "success"+email;
     }
 
+    @RolesAllowed("USER")
+    @GetMapping("/")
+    public String getBaseUser(){
+        return "user deshboard";
+    }
+
+    @RolesAllowed("ADMIN")
+    @GetMapping("/admin")
+    public String getAdmin()
+    {
+        return "admin deshboard";
+    }
 
 
 

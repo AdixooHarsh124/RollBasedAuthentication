@@ -16,11 +16,22 @@ public class Registration {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="rollNumber")
 	private Integer rollNumber;
-   
+
+	@Column(name="role", columnDefinition = "varchar(255) default 'USER'")
+	private String role;
+
     @Column(name="username")
     private String firstname;
 
-    @Column(name="lastname")
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	@Column(name="lastname")
     private String lastname;
 
     @Column(name="email",unique = true, nullable = false)
